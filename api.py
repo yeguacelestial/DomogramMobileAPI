@@ -1,18 +1,32 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, request
+from flask_restful import Resource, Api
 
-# Initialize Flask
+
+# Initializing Flask API
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'Thisissecret!'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/rexcolt/GitHub/DomogramApp/DomogramMobileAPI/database.db'
-db = SQLAlchemy(app)
+api = Api(app)
 
 
-# --- DB Table - User ---
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(15), unique=True)
-    password = db.Column(db.String(15), unique=True)
+# Handling HTTP requests of class 'Hello world'
+class HelloWorld(Resource):
+    def get(self):
+        return {'about': 'Hello world'}
+
+    def post(self):
+        # Fetch POST request data
+        some_json = request.get_json()
+        return {'you sent': some_json}, 201
+
+
+# Handling HTTP requests of class 'Multi'
+class Multi(Resource):
+    def get(self, num):
+        return {'result': num*10}
+
+
+# Create endpoints, and associate them with created classes
+api.add_resource(HelloWorld, '/')
+api.add_resource(Multi, '/multi/<int:num>')
 
 
 if __name__ == '__main__':
