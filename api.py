@@ -1,9 +1,12 @@
+# Import models
+from models import User, db, app
+
+# Flask
 from flask import Flask, request
 from flask_restful import Resource, Api
 
 
 # Initializing Flask API
-app = Flask(__name__)
 api = Api(app)
 
 
@@ -18,15 +21,28 @@ class HelloWorld(Resource):
         return {'you sent': some_json}, 201
 
 
-# Handling HTTP requests of class 'Multi'
-class Multi(Resource):
-    def get(self, num):
-        return {'result': num*10}
+# SignUp Endpoint
+class SignUp(Resource):
+    def get(self):
+        return {'test': 'this is a test'}, 201
+
+    def post(self):
+        # JSON object fromm POST request
+        json = request.get_json()
+        print(json['email'], json['password'])
+        # Create User row with json data
+        new_user = User(email=json['email'], password=json['password'])
+
+        # Add new_user to db
+        db.session.add(new_user)
+        db.session.commit()
+
+        return {'aviso': 'nuevo usuario creado'}, 201
 
 
 # Create endpoints, and associate them with created classes
 api.add_resource(HelloWorld, '/')
-api.add_resource(Multi, '/multi/<int:num>')
+api.add_resource(SignUp, '/signup')
 
 
 if __name__ == '__main__':
