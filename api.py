@@ -11,25 +11,35 @@ api = Api(app)
 
 
 # Handling HTTP requests of class 'Hello world'
-class HelloWorld(Resource):
+class SignIn(Resource):
     def get(self):
-        return {'about': 'Hello world'}
+        return {'test': 'this is a test for signin endpoint'}
 
     def post(self):
-        # Fetch POST request data
-        some_json = request.get_json()
-        return {'you sent': some_json}, 201
+        # Filter request data
+        json = request.get_json()
+
+        # Validate if user is registered
+        user = User.query.filter_by(email=json['email']).first()
+
+        if user:
+            # Check if password matches
+            if user.password == json['password']:
+                return {'aviso': 'Usuario autenticado con exito'}, 201
+
+        return {'error': 'Usuario o contraseña no coinciden.'}, 201
 
 
 # SignUp Endpoint
 class SignUp(Resource):
     def get(self):
-        return {'test': 'this is a test'}, 201
+        return {'test': 'this is a test for signup endpoint'}, 201
 
     def post(self):
-        # JSON object fromm POST request
+        # JSON object from POST request
         json = request.get_json()
         print(json['email'], json['password'])
+
         # Create User row with json data
         new_user = User(email=json['email'], password=json['password'])
 
@@ -41,8 +51,8 @@ class SignUp(Resource):
 
 
 # Create endpoints, and associate them with created classes
-api.add_resource(HelloWorld, '/')
 api.add_resource(SignUp, '/signup')
+api.add_resource(SignIn, '/signin')
 
 
 if __name__ == '__main__':
