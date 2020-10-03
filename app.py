@@ -1,8 +1,10 @@
+import json
+
 # Import models
 from models import User, db, app
 
 # Flask
-from flask import Flask, request
+from flask import Flask, request, Response
 from flask_restful import Resource, Api
 
 
@@ -37,16 +39,24 @@ class SignUp(Resource):
 
     def post(self):
         # JSON object from POST request
-        json = request.get_json()
+        json_object = request.get_json()
 
         # Create User row with json data
-        new_user = User(email=json['email'], password=json['password'])
+        new_user = User(
+            email=json_object['email'], password=json_object['password'])
 
         # Add new_user to db
         db.session.add(new_user)
         db.session.commit()
 
-        return {'aviso': 'nuevo usuario creado'}, 201
+        # Create response
+        response = Response(
+            response=json.dumps(
+                {'aviso': 'nuevo usuario creado'}),
+            status=201,
+            mimetype='application/json')
+
+        return response
 
 
 # Create endpoints, and associate them with created classes
