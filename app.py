@@ -38,7 +38,6 @@ class SignUp(Resource):
     def post(self):
         # JSON object from POST request
         json = request.get_json()
-        print(json['email'], json['password'])
 
         # Create User row with json data
         new_user = User(email=json['email'], password=json['password'])
