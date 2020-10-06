@@ -12,7 +12,7 @@ from flask_restful import Resource, Api
 api = Api(app)
 
 
-# Handling HTTP requests of API View 'SignIn'
+# SignIn endpoint
 class SignIn(Resource):
     def get(self):
         return {'test': 'this is a test for signin endpoint'}, 201
@@ -45,7 +45,7 @@ class SignIn(Resource):
         return response
 
 
-# SignUp Endpoint
+# SignUp endpoint
 class SignUp(Resource):
     def get(self):
         return {'test': 'this is a test for signup endpoint'}, 201
@@ -54,20 +54,33 @@ class SignUp(Resource):
         # JSON object from POST request
         new_user_json = request.get_json()
 
-        # Create User row with json data
-        new_user_json = User(
-            email=new_user_json['email'], password=new_user_json['password'])
+        # Validate if user email exists
+        new_user_exists = User.query.filter_by(
+            email=new_user_json['email']).first()
 
-        # Add new_user to db
-        db.session.add(new_user_json)
-        db.session.commit()
+        if new_user_exists:
+            response = Response(
+                response=json.dumps(
+                    {'error': 'El usuario ya existe. Por favor, introduce un correo distinto.'}),
+                status=201,
+                mimetype='application/json')
 
-        # Create response
-        response = Response(
-            response=json.dumps(
-                {'aviso': 'nuevo usuario creado'}),
-            status=201,
-            mimetype='application/json')
+        # Else, if user doesn't exists...
+        else:
+            # Create User row with json data
+            new_user_json = User(
+                email=new_user_json['email'], password=new_user_json['password'])
+
+            # Add new_user to db
+            db.session.add(new_user_json)
+            db.session.commit()
+
+            # Create response
+            response = Response(
+                response=json.dumps(
+                    {'success': 'Usuario creado con éxito.'}),
+                status=201,
+                mimetype='application/json')
 
         return response
 
