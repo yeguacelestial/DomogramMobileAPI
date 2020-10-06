@@ -4,7 +4,7 @@ import json
 from models import User, db, app
 
 # Flask
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 from flask_restful import Resource, Api
 
 
@@ -12,24 +12,37 @@ from flask_restful import Resource, Api
 api = Api(app)
 
 
-# Handling HTTP requests of class 'Hello world'
+# Handling HTTP requests of API View 'SignIn'
 class SignIn(Resource):
     def get(self):
-        return {'test': 'this is a test for signin endpoint'}
+        return {'test': 'this is a test for signin endpoint'}, 201
 
     def post(self):
         # Filter request data
-        json = request.get_json()
+        user_json = request.get_json()
 
         # Validate if user is registered
-        user = User.query.filter_by(email=json['email']).first()
+        user = User.query.filter_by(email=user_json['email']).first()
 
         if user:
             # Check if password matches
-            if user.password == json['password']:
-                return {'aviso': 'Usuario autenticado con exito'}, 201
+            if user.password == user_json['password']:
+                response = Response(
+                    response=json.dumps(
+                        {'success': 'Usuario autenticado con exito.'}),
+                    status=201,
+                    mimetype='application/json')
 
-        return {'error': 'Usuario o contraseña no coinciden.'}, 201
+                return response
+
+        # Else if password doesn't match
+        response = Response(
+            response=json.dumps(
+                {'error': 'Usuario y/o contraseña no coinciden.'}),
+            status=201,
+            mimetype='application/json')
+
+        return response
 
 
 # SignUp Endpoint
@@ -39,14 +52,14 @@ class SignUp(Resource):
 
     def post(self):
         # JSON object from POST request
-        json_object = request.get_json()
+        new_user_json = request.get_json()
 
         # Create User row with json data
-        new_user = User(
-            email=json_object['email'], password=json_object['password'])
+        new_user_json = User(
+            email=new_user_json['email'], password=new_user_json['password'])
 
         # Add new_user to db
-        db.session.add(new_user)
+        db.session.add(new_user_json)
         db.session.commit()
 
         # Create response

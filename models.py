@@ -9,7 +9,7 @@ load_dotenv()
 
 # Initialize Flask
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'Thisissecret!'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 db = SQLAlchemy(app)
 
@@ -18,4 +18,4 @@ db = SQLAlchemy(app)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(15), unique=True)
-    password = db.Column(db.String(15), unique=True)
+    password = db.Column(db.String(15), unique=False)
