@@ -1,18 +1,44 @@
+import os
 import json
+from itsdangerous import URLSafeTimedSerializer
+from dotenv import load_dotenv
 
-# Import models
-from models import User, db, app
-
-# Flask
 from flask import Flask, request, Response, jsonify
+from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api
+from flask_mail import Mail, Message
 
+
+# --- SETTINGS ---
+
+# Load env variables
+load_dotenv()
+
+# Initialize Flask
+app = Flask(__name__)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+db = SQLAlchemy(app)
 
 # Initializing Flask API
 api = Api(app)
 
+# Flask Mail config
+app.config.from_pyfile('config.cfg')
+mail = Mail(app)
+s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
-# SignIn endpoint
+
+# --- DB MODELS ---
+# Table: User
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(15), unique=True)
+    password = db.Column(db.String(15), unique=False)
+
+
+# --- API ENDPOINTS ---
+# Endpoint: SignIn
 class SignIn(Resource):
     def get(self):
         return {'test': 'this is a test for signin endpoint'}, 201
@@ -29,7 +55,7 @@ class SignIn(Resource):
             if user.password == user_json['password']:
                 response = Response(
                     response=json.dumps(
-                        {'success': 'Usuario autenticado con exito.'}),
+                        {'success': 'Has iniciado sesión.'}),
                     status=201,
                     mimetype='application/json')
 
@@ -45,7 +71,7 @@ class SignIn(Resource):
         return response
 
 
-# SignUp endpoint
+# Endpoint: SignUp
 class SignUp(Resource):
     def get(self):
         return {'test': 'this is a test for signup endpoint'}, 201
@@ -85,7 +111,22 @@ class SignUp(Resource):
         return response
 
 
-# Create endpoints, and associate them with created classes
+# --- API SERVER ROUTES ---
+# Route: Confirm email
+@app.route('/api/confirm_email/<token>')
+def confirm_email(token):
+    email = s.loads(token, salt='email-confirm', max_age=60)
+    return 'Tu registro fue confirmado.'
+
+
+# --- FUNCTIONS ---
+# Generate a token with a given email
+def generate_token(email):
+    token = s.dumps(email, salt='email-confirm')
+    return token
+
+
+# API Endpoints
 api.add_resource(SignUp, '/signup')
 api.add_resource(SignIn, '/signin')
 
