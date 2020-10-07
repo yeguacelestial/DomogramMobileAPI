@@ -53,14 +53,6 @@ class SignIn(Resource):
         if user:
             response = handle_signin(user_json, user)
 
-        # Else if password doesn't matches
-        else:
-            response = Response(
-                response=json.dumps(
-                    {'error': 'Usuario y/o contraseña no coinciden.'}),
-                status=201,
-                mimetype='application/json')
-
         return response
 
 
@@ -143,17 +135,23 @@ def handle_signin(user_json, user):
             status=201,
             mimetype='application/json')
 
-        return response
-
     # Check if password matches
-    if user.password == user_json['password'] and user.verified:
+    elif user.password == user_json['password'] and user.verified:
         response = Response(
             response=json.dumps(
                 {'success': 'Has iniciado sesión.'}),
             status=201,
             mimetype='application/json')
 
-        return response
+    # Else if password doesn't matches
+    else:
+        response = Response(
+            response=json.dumps(
+                {'error': 'Usuario y/o contraseña no coinciden.'}),
+            status=201,
+            mimetype='application/json')
+
+    return response
 
 
 # Handle confirmation of a given email
