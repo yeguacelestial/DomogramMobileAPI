@@ -1,16 +1,15 @@
 import os
 import json
-from itsdangerous import URLSafeTimedSerializer
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
 from dotenv import load_dotenv
 
-from flask import Flask, request, Response, jsonify
+from flask import Flask, request, Response, jsonify, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api
 from flask_mail import Mail, Message
 
 
 # --- SETTINGS ---
-
 # Load env variables
 load_dotenv()
 
@@ -35,6 +34,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(15), unique=True)
     password = db.Column(db.String(15), unique=False)
+    verified = db.Column(db.Boolean, unique=False)
 
 
 # --- API ENDPOINTS ---
@@ -51,22 +51,15 @@ class SignIn(Resource):
         user = User.query.filter_by(email=user_json['email']).first()
 
         if user:
-            # Check if password matches
-            if user.password == user_json['password']:
-                response = Response(
-                    response=json.dumps(
-                        {'success': 'Has iniciado sesión.'}),
-                    status=201,
-                    mimetype='application/json')
+            response = handle_signin(user_json, user)
 
-                return response
-
-        # Else if password doesn't match
-        response = Response(
-            response=json.dumps(
-                {'error': 'Usuario y/o contraseña no coinciden.'}),
-            status=201,
-            mimetype='application/json')
+        # Else if password doesn't matches
+        else:
+            response = Response(
+                response=json.dumps(
+                    {'error': 'Usuario y/o contraseña no coinciden.'}),
+                status=201,
+                mimetype='application/json')
 
         return response
 
@@ -79,6 +72,9 @@ class SignUp(Resource):
     def post(self):
         # JSON object from POST request
         new_user_json = request.get_json()
+        new_user_email = new_user_json['email']
+        new_user_password = new_user_json['password']
+        new_user_verified = False
 
         # Validate if user email exists
         new_user_exists = User.query.filter_by(
@@ -94,17 +90,20 @@ class SignUp(Resource):
         # Else, if user doesn't exists...
         else:
             # Create User row with json data
-            new_user_json = User(
-                email=new_user_json['email'], password=new_user_json['password'])
+            new_user = User(
+                email=new_user_email, password=new_user_password, verified=False)
+
+            # Handle confirm email
+            handle_confirm_email(new_user_email)
 
             # Add new_user to db
-            db.session.add(new_user_json)
+            db.session.add(new_user)
             db.session.commit()
 
             # Create response
             response = Response(
                 response=json.dumps(
-                    {'success': 'Usuario creado con éxito.'}),
+                    {'success': 'Usuario creado con éxito. Confirma tu registro para poder iniciar sesión.'}),
                 status=201,
                 mimetype='application/json')
 
@@ -115,18 +114,64 @@ class SignUp(Resource):
 # Route: Confirm email
 @app.route('/api/confirm_email/<token>')
 def confirm_email(token):
-    email = s.loads(token, salt='email-confirm', max_age=60)
-    return 'Tu registro fue confirmado.'
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=60)
+
+        # Get user row on db and set verified to true
+        user_row = User.query.filter_by(email=email).first()
+        user_row.verified = True
+        db.session.commit()
+
+    except SignatureExpired:
+        return '<h1>El link de confirmación ha expirado.</h1>'
+
+    except BadTimeSignature:
+        return '<h1>Whoops! No deberías estar aquí.</h1>'
+
+    return """<h1>¡Tu cuenta ha sido confirmada! </h1> 
+        <p>Accede a la plataforma de Domogram con tus datos de registro.</p>"""
 
 
 # --- FUNCTIONS ---
-# Generate a token with a given email
-def generate_token(email):
+# Handle user exists actions
+def handle_signin(user_json, user):
+    # Check if password matches
+    if user.password == user_json['password'] and user.verified == False:
+        response = Response(
+            response=json.dumps(
+                {'success': 'Estás registrado en Domogram, pero no has activado tu cuenta. ¡Revisa el correo de confirmación!'}),
+            status=201,
+            mimetype='application/json')
+
+        return response
+
+    # Check if password matches
+    if user.password == user_json['password'] and user.verified:
+        response = Response(
+            response=json.dumps(
+                {'success': 'Has iniciado sesión.'}),
+            status=201,
+            mimetype='application/json')
+
+        return response
+
+
+# Handle confirmation of a given email
+def handle_confirm_email(email):
     token = s.dumps(email, salt='email-confirm')
-    return token
+
+    msg = Message('Confirma tu registro en Domogram',
+                  sender='domogrambot@gmail.com',
+                  recipients=[email])
+
+    link = url_for('confirm_email', token=token, _external=True)
+
+    msg.body = f"""{link}"""
+
+    mail.send(msg)
 
 
-# API Endpoints
+# Create API Endpoints
 api.add_resource(SignUp, '/signup')
 api.add_resource(SignIn, '/signin')
 
