@@ -53,6 +53,13 @@ class SignIn(Resource):
         if user:
             response = handle_signin(user_json, user)
 
+        else:
+            response = Response(
+                response=json.dumps(
+                    {'error': 'El usuario no existe. Asegúrate de haberte registrado en Domogram.'}),
+                status=201,
+                mimetype='application/json')
+
         return response
 
 
@@ -95,7 +102,7 @@ class SignUp(Resource):
             # Create response
             response = Response(
                 response=json.dumps(
-                    {'success': 'Usuario creado con éxito. Confirma tu registro para poder iniciar sesión.'}),
+                    {'success': 'Usuario creado. Tienes 5 minutos para confirmar tu registro en Domogram.'}),
                 status=201,
                 mimetype='application/json')
 
@@ -164,7 +171,7 @@ def handle_confirm_email(email):
 
     link = url_for('confirm_email', token=token, _external=True)
 
-    msg.body = f"""{link}"""
+    msg.body = f"""¡Bienvenido a Domogram! Para confirmar tu cuenta, entra al siguiente link de confirmación:\n{link}"""
 
     mail.send(msg)
 
