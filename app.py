@@ -138,7 +138,7 @@ def handle_signin(user_json, user):
     if user.password == user_json['password'] and user.verified == False:
         response = Response(
             response=json.dumps(
-                {'success': 'Estás registrado en Domogram, pero no has activado tu cuenta. ¡Revisa el correo de confirmación!'}),
+                {'error': 'Estás registrado en Domogram, pero no has activado tu cuenta. ¡Revisa el correo de confirmación!'}),
             status=201,
             mimetype='application/json')
 
