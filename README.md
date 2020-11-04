@@ -42,10 +42,10 @@ Las siguientes definiciones solo detallarán el valor esperado del campo `data`.
 `POST /dispositivos`
 
 **Argumentos**
-- `"identificador:string"`, identificador globalmente único para este dispositivo
-- `"nombre:string"`, un nombre amigable para este dispositivo
-- `"tipo_dispositivo:string"`, el tipo de dispositivo entendido por el cliente
-- `"pin_dispositivo:string"`, número de pin en microcontrolador (Uso sugerido: Arduino)
+- `"identificador":string`, identificador globalmente único para este dispositivo
+- `"nombre":string`, un nombre amigable para este dispositivo
+- `"tipo_dispositivo":string`, el tipo de dispositivo entendido por el cliente
+- `"pin_dispositivo":string`, número de pin en microcontrolador (Uso sugerido: Arduino)
 
 Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 
