@@ -1,15 +1,20 @@
-import markdown
 import os
+import time
 import shelve
-import pyfirmata
+
+import markdown
+import serial
 
 from flask import Flask, g
 from flask_restful import Resource, Api, reqparse
 
 from app import app
 
+from .handle_serial import send_serial
+
+
 puerto = '/dev/ttyACM0'
-board = pyfirmata.Arduino(puerto)
+board = serial.Serial(puerto, 115200)
 
 
 def get_db():
@@ -74,6 +79,11 @@ class Dispositivo(Resource):
         if not (identificador in shelf):
             return {'message': 'Dispositivo no encontrado'}, 404
 
+        # Sensor - Temperatura y humedad
+        if identificador == 'temp-y-humedad':
+
+            print("TEMPERATURA Y HUMEDAD => ")
+
         return {'message': 'Dispositivo encontrado', 'data': shelf[identificador]}, 200
 
     def put(self, identificador):
@@ -94,16 +104,9 @@ class Dispositivo(Resource):
         args = parser.parse_args()
         new_args = dict(shelf[identificador])  # Copy of current shelf
 
-        # Leds
-        if 'encendido' in args['parametros']:
-            encendido = args['parametros']['encendido']
-
-            if encendido:
-                board.digital[int(shelf[identificador]
-                                  ['pin_dispositivo'])].write(1)
-            else:
-                board.digital[int(shelf[identificador]
-                                  ['pin_dispositivo'])].write(0)
+        if 'dato_serial' in args['parametros']:
+            dato_serial = args['parametros']['dato_serial'].encode()
+            send_serial(board, args, shelf, identificador, dato_serial)
 
         for k, v in args.items():
             if v != None:
