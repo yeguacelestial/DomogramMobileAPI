@@ -89,7 +89,10 @@ class Dispositivo(Resource):
         # Parse the arguments into an object
         args = parser.parse_args()
         new_args = dict(shelf[identificador])
-        print(new_args)
+
+        if 'dato_serial' in args['parametros']:
+            print(
+                f"ENVIANDO DATO SERIAL... => {args['parametros']['dato_serial']}")
 
         for k, v in args.items():
             if v != None:
