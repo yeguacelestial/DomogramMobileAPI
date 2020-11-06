@@ -8,6 +8,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api
 from flask_mail import Mail, Message
 
+# Microservices
+from registro_dispositivos import Dispositivo, DispositivosList
+
 
 # --- SETTINGS ---
 # Load env variables
@@ -177,8 +180,8 @@ def handle_confirm_email(email):
 
 
 # Create API Endpoints
-api.add_resource(SignUp, '/signup')
-api.add_resource(SignIn, '/signin')
+# api.add_resource(SignUp, '/signup')
+# api.add_resource(SignIn, '/signin')
 
 
 if __name__ == '__main__':
