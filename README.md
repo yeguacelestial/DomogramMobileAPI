@@ -200,3 +200,53 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
     }
 ]
 ```
+
+
+### Sensores - Temperatura y humedad
+
+**Definición**
+
+`GET /dispositivos/sensores/temp-y-humedad/`
+
+**Response**
+- `200 OK` on success
+- `404 Not Found` si el identificador no existe
+
+```json
+[
+    {
+        "identificador": "temp-y-humedad",
+        "nombre": "Temperatura y humedad",
+        "tipo_dispositivo": "sensor",
+        "pin_dispositivo": "A0",
+        "parametros": {
+            "temperatura": 23.4, //°C
+            "humedad": 50.0 //%
+        }
+    }
+]
+```
+
+### Sensores - Ultrasónico
+
+**Definición**
+
+`GET /dispositivos/sensores/ultrasonico/`
+
+**Response**
+- `200 OK` on success
+- `404 Not Found` si el identificador no existe
+
+```json
+[
+    {
+        "identificador": "ultrasonico",
+        "nombre": "Sensor ultrasónico",
+        "tipo_dispositivo": "sensor",
+        "pin_dispositivo": ["10", "11"], // EchoPin y TriggerPin
+        "parametros": {
+            "distancia": 23.43, //cm
+        }
+    }
+]
+```
