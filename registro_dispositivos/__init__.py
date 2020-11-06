@@ -83,7 +83,3 @@ class Dispositivo(Resource):
 
         del shelf[identificador]
         return '', 204
-
-
-api.add_resource(DispositivosList, '/dispositivos')
-api.add_resource(Dispositivo, '/dispositivo/<string:identificador>')

@@ -101,12 +101,13 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 
 ## Dispositivos a utilizar en el proyecto
 
-### Iluminación
+### Iluminación - Ver las luces disponibles
 
 **Definición**
 
-`PUT /dispositivos/luces/<identificador>`
+`GET /dispositivos/luces/`
 
+**Response**
 - `200 OK` on success
 - `404 Not Found` si el identificador no existe
 ```json
@@ -173,4 +174,29 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 ]
 ```
 
-El parámetro `encendido` determinará si el led con el pin asignado se encuentra encendido (`true`) o apagado (`false`).
+### Iluminación - Encender o apagar un led
+
+**Definición**
+
+`PUT /dispositivos/luces/<identificador>/parametros/`
+
+**Argumentos**
+- `"encendido":boolean`, indicar si el led del identificador estará encendido o apagado
+
+**Response**
+- `200 OK` on success
+- `404 Not Found` si el identificador no existe
+
+```json
+[
+    {
+        "identificador": "luz-comedor",
+        "nombre": "Luz de comedor",
+        "tipo_dispositivo": "led",
+        "pin_dispositivo": "7",
+        "parametros": {
+            "encendido": true
+        }
+    }
+]
+```

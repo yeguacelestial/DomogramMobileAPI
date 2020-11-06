@@ -8,9 +8,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api
 from flask_mail import Mail, Message
 
-# Microservices
-from registro_dispositivos import Dispositivo, DispositivosList
-
 
 # --- SETTINGS ---
 # Load env variables
@@ -21,9 +18,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 db = SQLAlchemy(app)
-
-# Initializing Flask API
-api = Api(app)
 
 # Flask Mail config
 app.config.from_pyfile('config.cfg')
@@ -182,7 +176,3 @@ def handle_confirm_email(email):
 # Create API Endpoints
 # api.add_resource(SignUp, '/signup')
 # api.add_resource(SignIn, '/signin')
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
