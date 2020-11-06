@@ -279,7 +279,7 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
         "tipo_dispositivo": "motor",
         "pin_dispositivo": "9",
         "parametros": {
-            "estado": false
+            "abierto": false
         }
     }
 ]
