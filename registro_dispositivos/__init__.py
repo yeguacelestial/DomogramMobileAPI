@@ -5,10 +5,7 @@ import shelve
 from flask import Flask, g
 from flask_restful import Resource, Api, reqparse
 
-app = Flask(__name__)
-
-# Initializing Flask API
-api = Api(app)
+from app import app
 
 
 def get_db():
@@ -54,6 +51,7 @@ class DispositivosList(Resource):
         parser.add_argument('nombre', required=True)
         parser.add_argument('tipo_dispositivo', required=True)
         parser.add_argument('pin_dispositivo', required=True)
+        parser.add_argument('parametros', type=dict, required=True)
 
         # Parse the arguments into an object
         args = parser.parse_args()
