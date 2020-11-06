@@ -1,4 +1,4 @@
-# DomogramMobile - API
+# DomogramMobile API
 
 ## Uso
 Todas las responses tendrán la siguiente forma
@@ -10,6 +10,7 @@ Todas las responses tendrán la siguiente forma
 ```
 
 Las siguientes definiciones solo detallarán el valor esperado del campo `data`.
+
 
 ### Listar todos los dispositivos
 
@@ -24,13 +25,20 @@ Las siguientes definiciones solo detallarán el valor esperado del campo `data`.
         "identificador": "luz-habitacion",
         "nombre": "Luz de habitacion",
         "tipo_dispositivo": "led",
-        "pin_dispositivo": "10"
+        "pin_dispositivo": "10",
+        "parametros":{
+            "encendido": false
+        }
     },
     {
         "identificador": "temp-humedad",
         "nombre": "Temperatura y humedad",
         "tipo_dispositivo": "sensor",
-        "pin_dispositivo": "A10"
+        "pin_dispositivo": "A10",
+        "parametros":{
+            "temperatura": 25.0,
+            "humedad": 50.0
+        }
     }
 ]
 ```
@@ -46,6 +54,7 @@ Las siguientes definiciones solo detallarán el valor esperado del campo `data`.
 - `"nombre":string`, un nombre amigable para este dispositivo
 - `"tipo_dispositivo":string`, el tipo de dispositivo entendido por el cliente
 - `"pin_dispositivo":string`, número de pin en microcontrolador (Uso sugerido: Arduino)
+- `parametros:json`, objeto JSON con parámetros e información del dispositivo
 
 Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 
@@ -73,7 +82,10 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
     "identificador": "luz-habitacion",
     "nombre": "Luz de habitacion",
     "tipo_dispositivo": "led",
-    "pin_dispositivo": "10"
+    "pin_dispositivo": "10",
+    "parametros": {
+        "encendido": false
+    }
 }
 ```
 
@@ -86,3 +98,79 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 **Response**
 - `404 Not Found` si el dispositivo no existe
 - `204 No Content` on success
+
+## Dispositivos a utilizar en el proyecto
+
+### Iluminación
+
+**Definición**
+
+`PUT /dispositivos/luces/<identificador>`
+
+- `200 OK` on success
+- `404 Not Found` si el identificador no existe
+```json
+[
+    {
+        "identificador": "luz-habitacion",
+        "nombre": "Luz de habitacion",
+        "tipo_dispositivo": "led",
+        "pin_dispositivo": "2",
+        "parametros": {
+            "encendido": false
+        }
+    },
+
+    {
+        "identificador": "luz-estancia",
+        "nombre": "Luz de estancia",
+        "tipo_dispositivo": "led",
+        "pin_dispositivo": "3",
+        "parametros": {
+            "encendido": false
+        }
+    },
+
+    {
+        "identificador": "luz-baño",
+        "nombre": "Luz de baño",
+        "tipo_dispositivo": "led",
+        "pin_dispositivo": "4",
+        "parametros": {
+            "encendido": false
+        }
+    },
+
+    {
+        "identificador": "luz-cocina",
+        "nombre": "Luz de cocina",
+        "tipo_dispositivo": "led",
+        "pin_dispositivo": "5",
+        "parametros": {
+            "encendido": false
+        }
+    },
+
+    {
+        "identificador": "luz-entrada",
+        "nombre": "Luz de entrada",
+        "tipo_dispositivo": "led",
+        "pin_dispositivo": "6",
+        "parametros": {
+            "encendido": false
+        }
+    },
+
+    {
+        "identificador": "luz-comedor",
+        "nombre": "Luz de comedor",
+        "tipo_dispositivo": "led",
+        "pin_dispositivo": "7",
+        "parametros": {
+            "encendido": false
+        }
+    }
+]
+```
+
+El parámetro `encendido` determinará si el led con el pin asignado se encuentra encendido (`true`) o apagado (`false`).
