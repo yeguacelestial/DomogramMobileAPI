@@ -77,7 +77,7 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 }
 ```
 
-## Eliminar un dispositivo
+### Eliminar un dispositivo
 
 **Definición**
 
