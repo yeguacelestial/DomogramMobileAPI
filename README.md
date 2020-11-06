@@ -105,7 +105,7 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 
 **Definición**
 
-`GET /dispositivos/luces/`
+`GET /dispositivos/luces`
 
 **Response**
 - `200 OK` on success
@@ -206,7 +206,7 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 
 **Definición**
 
-`GET /dispositivos/sensores/temp-y-humedad/`
+`GET /dispositivos/sensores/temp-y-humedad`
 
 **Response**
 - `200 OK` on success
@@ -231,7 +231,7 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 
 **Definición**
 
-`GET /dispositivos/sensores/ultrasonico/`
+`GET /dispositivos/sensores/ultrasonico`
 
 **Response**
 - `200 OK` on success
@@ -246,6 +246,77 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
         "pin_dispositivo": ["10", "11"], // EchoPin y TriggerPin
         "parametros": {
             "distancia": 23.43, //cm
+        }
+    }
+]
+```
+
+### Servomotores - Ver estado
+
+**Definición**
+
+`GET /dispositivos/motores/servo`
+
+**Response**
+- `200 OK` on success
+- `404 Not Found` si el identificador no existe
+
+```json
+[
+    {
+        "identificador": "servomotor-izq",
+        "nombre": "Servomotor izquierdo",
+        "tipo_dispositivo": "motor",
+        "pin_dispositivo": "8",
+        "parametros": {
+            "abierto": false
+        }
+    },
+
+    {
+        "identificador": "servomotor-der",
+        "nombre": "Servomotor derecho",
+        "tipo_dispositivo": "motor",
+        "pin_dispositivo": "9",
+        "parametros": {
+            "estado": false
+        }
+    }
+]
+```
+
+### Servomotores - Abrir o cerrar
+
+**Definición**
+
+`POST /dispositivos/motores/servo/<identificador>/parametros`
+
+**Argumentos**
+- `"abierto":boolean`, indica si el servomotor está abierto o cerrado. Estos motores están encargados de abrir y cerrar la casa, y ambos deben estar siempre en el mismo estado.
+
+**Response**
+- `200 OK` on success
+- `404 Not Found` si el identificador no existe
+
+```json
+[
+    {
+        "identificador": "servomotor-izq",
+        "nombre": "Servomotor izquierdo",
+        "tipo_dispositivo": "motor",
+        "pin_dispositivo": "8",
+        "parametros": {
+            "abierto": false
+        }
+    },
+
+    {
+        "identificador": "servomotor-der",
+        "nombre": "Servomotor derecho",
+        "tipo_dispositivo": "motor",
+        "pin_dispositivo": "9",
+        "parametros": {
+            "abierto": false
         }
     }
 ]
