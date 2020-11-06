@@ -10,7 +10,7 @@ from flask_restful import Resource, Api, reqparse
 
 from app import app
 
-from .handle_sensores import handle_temp_hum
+from .handle_sensores import handle_temp_hum, handle_ultrasonico
 
 puerto = '/dev/ttyACM0'
 board = serial.Serial(puerto, 115200)
@@ -81,6 +81,11 @@ class Dispositivo(Resource):
         # Sensor - Temperatura y humedad
         if identificador == 'temp-y-humedad':
             shelf[identificador] = handle_temp_hum(board, shelf, identificador)
+
+        # Sensor - Ultrasonico
+        if identificador == 'ultrasonico':
+            shelf[identificador] = handle_ultrasonico(
+                board, shelf, identificador)
 
         return {'message': 'Dispositivo encontrado', 'data': shelf[identificador]}, 200
 
