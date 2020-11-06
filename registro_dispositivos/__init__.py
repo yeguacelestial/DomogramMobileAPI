@@ -10,8 +10,7 @@ from flask_restful import Resource, Api, reqparse
 
 from app import app
 
-from .handle_serial import send_serial
-
+from .handle_sensores import handle_temp_hum
 
 puerto = '/dev/ttyACM0'
 board = serial.Serial(puerto, 115200)
@@ -81,8 +80,7 @@ class Dispositivo(Resource):
 
         # Sensor - Temperatura y humedad
         if identificador == 'temp-y-humedad':
-
-            print("TEMPERATURA Y HUMEDAD => ")
+            shelf[identificador] = handle_temp_hum(board, shelf, identificador)
 
         return {'message': 'Dispositivo encontrado', 'data': shelf[identificador]}, 200
 
@@ -104,9 +102,10 @@ class Dispositivo(Resource):
         args = parser.parse_args()
         new_args = dict(shelf[identificador])  # Copy of current shelf
 
+        # If we recieve a serial byte on HTTP PUT Request...
         if 'dato_serial' in args['parametros']:
             dato_serial = args['parametros']['dato_serial'].encode()
-            send_serial(board, args, shelf, identificador, dato_serial)
+            board.write(dato_serial)
 
         for k, v in args.items():
             if v != None:
