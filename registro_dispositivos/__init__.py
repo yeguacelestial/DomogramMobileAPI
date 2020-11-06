@@ -1,11 +1,15 @@
 import markdown
 import os
 import shelve
+import pyfirmata
 
 from flask import Flask, g
 from flask_restful import Resource, Api, reqparse
 
 from app import app
+
+puerto = '/dev/ttyACM0'
+board = pyfirmata.Arduino(puerto)
 
 
 def get_db():
@@ -88,11 +92,18 @@ class Dispositivo(Resource):
 
         # Parse the arguments into an object
         args = parser.parse_args()
-        new_args = dict(shelf[identificador])
+        new_args = dict(shelf[identificador])  # Copy of current shelf
 
-        if 'dato_serial' in args['parametros']:
-            print(
-                f"ENVIANDO DATO SERIAL... => {args['parametros']['dato_serial']}")
+        # Leds
+        if 'encendido' in args['parametros']:
+            encendido = args['parametros']['encendido']
+
+            if encendido:
+                board.digital[int(shelf[identificador]
+                                  ['pin_dispositivo'])].write(1)
+            else:
+                board.digital[int(shelf[identificador]
+                                  ['pin_dispositivo'])].write(0)
 
         for k, v in args.items():
             if v != None:
