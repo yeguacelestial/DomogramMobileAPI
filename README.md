@@ -220,8 +220,8 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
         "tipo_dispositivo": "sensor",
         "pin_dispositivo": "A0",
         "parametros": {
-            "temperatura": 23.4, //°C
-            "humedad": 50.0 //%
+            "temperatura": 23.4,
+            "humedad": 50.0
         }
     }
 ]
@@ -243,9 +243,9 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
         "identificador": "ultrasonico",
         "nombre": "Sensor ultrasónico",
         "tipo_dispositivo": "sensor",
-        "pin_dispositivo": ["10", "11"], // EchoPin y TriggerPin
+        "pin_dispositivo": ["10", "11"],
         "parametros": {
-            "distancia": 23.43, //cm
+            "distancia": 23.43,
         }
     }
 ]
