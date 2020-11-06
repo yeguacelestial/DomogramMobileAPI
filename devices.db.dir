@@ -1,0 +1,8 @@
+'luz-habitacion', (1024, 251)
+'luz-estancia', (1536, 220)
+'luz-baño', (2048, 214)
+'luz-cocina', (2560, 216)
+'luz-entrada', (3072, 218)
+'luz-comedor', (3584, 218)
+'temp-y-humedad', (4096, 266)
+'ultrasonico', (4608, 235)
