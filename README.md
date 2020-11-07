@@ -54,7 +54,7 @@ Las siguientes definiciones solo detallarán el valor esperado del campo `data`.
 - `"nombre":string`, un nombre amigable para este dispositivo
 - `"tipo_dispositivo":string`, el tipo de dispositivo entendido por el cliente
 - `"pin_dispositivo":string`, número de pin en microcontrolador (Uso sugerido: Arduino)
-- `parametros:json`, objeto JSON con parámetros e información del dispositivo
+- `"parametros":json`, objeto JSON con parámetros e información del dispositivo
 
 Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 
@@ -65,13 +65,16 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
     "identificador": "luz-habitacion",
     "nombre": "Luz de habitacion",
     "tipo_dispositivo": "led",
-    "pin_dispositivo": "10"
+    "pin_dispositivo": "10",
+    "parametros": {
+        "encendido": false
+    }
 }
 ```
 
 ### Ver detalles de dispositivos registrados
 
-`GET /dispositivos/<identificador>`
+`GET /dispositivo/<identificador>`
 
 **Response**
 - `404 Not Found` si el dispositivo no existe
@@ -93,7 +96,7 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 
 **Definición**
 
-`DELETE /dispositivos/<identificador>`
+`DELETE /dispositivo/<identificador>`
 
 **Response**
 - `404 Not Found` si el dispositivo no existe
@@ -105,7 +108,7 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 
 **Definición**
 
-`GET /dispositivos/luces`
+`GET /dispositivo/luz-<sala>`
 
 **Response**
 - `200 OK` on success
@@ -178,7 +181,7 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 
 **Definición**
 
-`PUT /dispositivos/luces/<identificador>/parametros/`
+`PUT /dispositivo/<identificador>`
 
 **Argumentos**
 - `"encendido":boolean`, indicar si el led del identificador estará encendido o apagado
@@ -231,7 +234,7 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 
 **Definición**
 
-`GET /dispositivos/sensores/ultrasonico`
+`GET /dispositivo/ultrasonico`
 
 **Response**
 - `200 OK` on success
@@ -255,7 +258,7 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 
 **Definición**
 
-`GET /dispositivos/motores/servo`
+`GET /dispositivo/puertas`
 
 **Response**
 - `200 OK` on success
@@ -264,21 +267,12 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 ```json
 [
     {
-        "identificador": "servomotor-izq",
-        "nombre": "Servomotor izquierdo",
+        "identificador": "puertas",
+        "nombre": "Puertas principales",
         "tipo_dispositivo": "motor",
         "pin_dispositivo": "8",
         "parametros": {
-            "abierto": false
-        }
-    },
-
-    {
-        "identificador": "servomotor-der",
-        "nombre": "Servomotor derecho",
-        "tipo_dispositivo": "motor",
-        "pin_dispositivo": "9",
-        "parametros": {
+            "dato_serial": "S",
             "abierto": false
         }
     }
@@ -289,10 +283,12 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 
 **Definición**
 
-`POST /dispositivos/motores/servo/<identificador>/parametros`
+`PUT /dispositivos/puertas`
 
 **Argumentos**
 - `"abierto":boolean`, indica si el servomotor está abierto o cerrado. Estos motores están encargados de abrir y cerrar la casa, y ambos deben estar siempre en el mismo estado.
+- `"parametros": {"dato_serial": "A"}`, gira los servomotores para abrir las puertas de la casa.
+- `"parametros": {"dato_serial": "S"}`, gira los servomotores para cerrar las puertas de la casa.
 
 **Response**
 - `200 OK` on success
@@ -301,21 +297,12 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 ```json
 [
     {
-        "identificador": "servomotor-izq",
-        "nombre": "Servomotor izquierdo",
+        "identificador": "puertas",
+        "nombre": "Puertas principales",
         "tipo_dispositivo": "motor",
         "pin_dispositivo": "8",
         "parametros": {
-            "abierto": false
-        }
-    },
-
-    {
-        "identificador": "servomotor-der",
-        "nombre": "Servomotor derecho",
-        "tipo_dispositivo": "motor",
-        "pin_dispositivo": "9",
-        "parametros": {
+            "dato_serial": "S",
             "abierto": false
         }
     }
