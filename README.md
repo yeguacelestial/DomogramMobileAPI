@@ -283,7 +283,7 @@ Si el dispositivo con el identificador asignado ya existe, será sobre-escrito.
 
 **Definición**
 
-`PUT /dispositivos/puertas`
+`PUT /dispositivo/puertas`
 
 **Argumentos**
 - `"abierto":boolean`, indica si el servomotor está abierto o cerrado. Estos motores están encargados de abrir y cerrar la casa, y ambos deben estar siempre en el mismo estado.
